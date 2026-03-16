@@ -11,8 +11,6 @@ venv/
 htmlcov/
 
 # ===== Environment =====
-.env
-*.env
 !.env.example
 
 # ===== Node =====
