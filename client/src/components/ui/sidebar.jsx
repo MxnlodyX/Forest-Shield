@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAppContext } from '../../context/AppContext';
 import {
     LayoutDashboard, Users, Archive, BarChart, Map, LogOut
 } from 'lucide-react';
 
 export function Sidebar() {
     const navigate = useNavigate();
+    const { logout } = useAppContext();
 
     const menuItems = [
         { path: '/dashboard', name: 'Dashboard', icon: LayoutDashboard },
@@ -16,7 +18,8 @@ export function Sidebar() {
     ];
 
     const handleSignOut = () => {
-        navigate('/');
+        logout();
+        navigate('/signin/backoffice');
     };
     return (
         <aside className="w-72 bg-[#0a0f0c] border-r border-[#1a2920] flex flex-col justify-between h-screen">
