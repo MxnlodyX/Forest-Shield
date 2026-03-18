@@ -408,7 +408,7 @@ export function TaskAssignPage() {
                   <p className="mt-1 text-sm text-gray-800">{selectedTask.id}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Zone</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Location</p>
                   <p className="mt-1 text-sm text-gray-800">{selectedTask.zone}</p>
                 </div>
               </div>
@@ -500,7 +500,7 @@ export function TaskAssignPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Zone</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Location</label>
                   <select
                     required
                     value={formData.zone}

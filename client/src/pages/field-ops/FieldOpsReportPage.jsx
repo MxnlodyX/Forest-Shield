@@ -10,6 +10,7 @@ const initialReports = [
         details: 'Observed elephant herd crossing near stream line.',
         images: ['https://images.unsplash.com/photo-1546182990-dffeafbe841d?q=80&w=800&auto=format&fit=crop'],
         createdAt: '2026-03-18 08:20',
+        title: 'Wildlife Observation',
     },
     {
         id: 102,
@@ -18,6 +19,7 @@ const initialReports = [
         details: 'Fence wire damaged in two segments, requires maintenance team.',
         images: ['https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800&auto=format&fit=crop'],
         createdAt: '2026-03-18 09:45',
+        title: 'Fence Damage Report',
     },
 ];
 
@@ -31,10 +33,12 @@ export function FieldOpsReportPage() {
     const [selectedReport, setSelectedReport] = useState(null);
 
     const [formData, setFormData] = useState({
+        title: '',
         type: incidentTemplates?.[0]?.id || 'general',
         location: '',
         details: '',
-        images: [],
+        images: []
+        
     });
 
     const openModal = (mode, report = null) => {
@@ -48,6 +52,7 @@ export function FieldOpsReportPage() {
 
         if (report) {
             setFormData({
+                title: report.title,
                 type: report.type,
                 location: report.location,
                 details: report.details,
@@ -83,6 +88,7 @@ export function FieldOpsReportPage() {
         if (modalMode === 'add') {
             const newReport = {
                 id: Date.now(),
+                title: formData.title,
                 type: formData.type,
                 location: formData.location,
                 details: formData.details,
@@ -104,6 +110,7 @@ export function FieldOpsReportPage() {
                             location: formData.location,
                             details: formData.details,
                             images: formData.images,
+                            title: formData.title,
                         }
                         : report
                 )
@@ -229,6 +236,17 @@ export function FieldOpsReportPage() {
                         <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
                             {(modalMode === 'add' || modalMode === 'edit') && (
                                 <div className="flex flex-col gap-5">
+                                    <div>
+                                        <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Incident Title</label>
+                                        <input
+                                            type="text"
+                                            value={formData.title}
+                                            onChange={(event) => setFormData((prev) => ({ ...prev, title: event.target.value }))}
+                                            className="mt-2 w-full bg-[#111820] border border-slate-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-lg px-4 py-3 text-sm text-slate-100 outline-none transition-all"
+                                            placeholder="Enter incident title"
+                                        />
+                                    </div>
+                                    
                                     <div>
                                         <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Incident Type</label>
                                         <select
