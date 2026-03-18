@@ -34,13 +34,13 @@ const destinationIcon = L.divIcon({
   iconAnchor: [16, 16],
 });
 
-export function FieldOpsNavigate({ destination, onEndNavigation }) {
+export function FieldOpsNavigate({ destination, onEndNavigation = () => {} }) {
   // รับข้อมูลเป้าหมาย หรือใช้ค่า Default
   const target = destination || { 
-    name: 'Sector Alpha', 
+    name: 'Khao Yai Central Sector', 
     distance: '0 KM', 
     eta: '-- MIN',
-    position: [18.7883, 98.9853] 
+    position: [14.4386, 101.3724] 
   };
 
   // จำลองพิกัดปัจจุบันของผู้ใช้ (ห่างจากจุดหมายนิดหน่อย)

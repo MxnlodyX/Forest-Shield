@@ -69,43 +69,11 @@ export function FieldOpsMapPage() {
 
             <div className="w-full max-w-md px-4 py-6 flex flex-col gap-5 relative z-10">
 
-                {/* =========================================
-            แผนที่ Interactive ของจริง (Leaflet Map)
-            ========================================= */}
-                <header className="relative w-full h-72 rounded-2xl border border-slate-700/60 shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden shrink-0">
-
-                    <MapContainer
-                        center={[18.7883, 98.9853]} // พิกัดเริ่มต้นที่ให้แผนที่โฟกัส
-                        zoom={14}
-                        zoomControl={false} // ซ่อนปุ่ม +/- แบบธรรมดาเพื่อให้ดูเป็นแอป Tactical
-                        className="w-full h-full z-0"
-                    >
-                        {/* ดึงภาพแผนที่มาจาก CartoDB แบบ Dark Mode สุดเท่ */}
-                        <TileLayer
-                            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                        />
-
-                        {/* วนลูปวาดหมุดลงบนแผนที่จริง */}
-                        {mapPoints.map((point) => (
-                            <Marker
-                                key={point.id}
-                                position={point.position}
-                                icon={createTacticalMarker(point, selectedPointId === point.id)}
-                                eventHandlers={{
-                                    click: () => setSelectedPointId(point.id), // เมื่อจิ้มหมุด ให้เปิด Bottom Sheet
-                                }}
-                            />
-                        ))}
-                    </MapContainer>
-
-                    {/* ป้ายแสดงสถานะซ้อนทับมุมล่างซ้าย */}
-                    <div className="absolute bottom-3 left-3 z-10 pointer-events-none bg-[#111820]/80 backdrop-blur px-2 py-1 rounded-md border border-slate-700/50">
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <p className="text-[9px] text-emerald-400 font-mono font-bold tracking-widest">LIVE SATELLITE (CARTO)</p>
-                        </div>
-                    </div>
-                </header>
+                <div className="">
+                    <h1 className="text-2xl font-bold text-white">Active Field Ops</h1>
+                    <p className="text-sm text-slate-400 mt-1">Real-time map of detected points and navigation.</p>
+                </div>
+      
 
                 {/* ... (ส่วนแสดงผลรายการ Available Waypoints และ Bottom Sheet ด้านล่าง ใช้โค้ดเดิมได้เลย) ... */}
 
