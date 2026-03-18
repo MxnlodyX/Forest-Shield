@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 export function SignInPage() {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        navigate('/dashboard');
+    };
+
     return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-[#1c2b24] to-[#2f453a] p-5 font-sans text-white box-border">
 
@@ -23,7 +32,7 @@ export function SignInPage() {
             </div>
 
             {/* Form Section */}
-            <form className="flex flex-col gap-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
 
                 {/* Username Input */}
                 <div className="flex flex-col gap-2">
