@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-    LayoutDashboard, Users, Archive, BarChart, Map, Settings,
-    Search, Plus, X, Edit2, Trash2, Eye, CheckCircle, Bell, Camera
+    Search, Plus, X, Edit2, Trash2, Eye, CheckCircle, Camera
 } from 'lucide-react';
-import { Sidebar } from '../../components/ui/sidebar';
 
 // ข้อมูลจำลอง (Mock Data)
 const initialStaff = [
@@ -74,15 +72,15 @@ export function HRMDashboard() {
     );
 
     return (
-        // เปลี่ยนพื้นหลังหลักเป็นสีเทาอ่อน สลับกับ Card สีขาว
-        <div className="flex h-screen bg-gray-50 text-gray-800 font-sans overflow-hidden">
-
-            <Sidebar />
-
-            {/* Main Content */}
-            <main className="flex-1 overflow-y-auto">
-                {/* Header */}
-                <header className="p-8 flex justify-between items-center">
+        <>
+            {/* Header */}
+            <header className="p-8 flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-gray-900">Human Resource Management</h1>
+            </header>
+            <div className="px-8 pb-8">
+                {/* Stats Cards */}
+                {/* Search and Add Staff */}
+                <div className="flex justify-between items-center mb-6">
                     <div className="relative w-96">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                         <input
@@ -98,66 +96,48 @@ export function HRMDashboard() {
                             <Plus size={16} /> <span>Add New Staff</span>
                         </button>
                     </div>
-                </header>
+                </div>
+                {/* Table */}
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
+                        <h3 className="text-sm font-semibold text-gray-500">NAME</h3>
+                        <div className="w-1/2 flex justify-between text-sm font-semibold text-gray-500">
+                            <span className="w-1/3">ROLE</span>
+                            <span className="w-1/3">STATUS</span>
+                            <span className="w-1/3 text-right">ACTIONS</span>
+                        </div>
+                    </div>
 
-                <div className="px-8 pb-8">
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-4 gap-6 mb-8">
-                        {[{ label: 'TOTAL PERSONNEL', val: staffList.length, color: 'text-gray-900' },
-                        { label: 'ON DUTY', val: staffList.filter(s => s.status === 'On Duty').length, color: 'text-gray-900' },
-                        { label: 'OFF DUTY', val: staffList.filter(s => s.status === 'Off Duty').length, color: 'text-orange-500' }
-                        ].map((stat, i) => (
-                            <div key={i} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                                <p className="text-xs font-semibold text-gray-500 mb-2">{stat.label}</p>
-                                <div className="flex justify-between items-end">
-                                    <h2 className={`text-3xl font-bold ${stat.color}`}>{stat.val}</h2>
+                    <div className="divide-y divide-gray-200">
+                        {filteredStaff.map(staff => (
+                            <div key={staff.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors group">
+                                <div className="flex items-center space-x-4 w-1/2">
+                                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
+                                        {staff.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-900 font-medium">{staff.name}</p>
+                                        <p className="text-xs text-gray-500">{staff.title} • {staff.area}</p>
+                                    </div>
+                                </div>
+                                <div className="w-1/2 flex items-center justify-between">
+                                    <div className="w-1/3 text-sm text-gray-600">{staff.role}</div>
+                                    <div className="w-1/3">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${staff.status === 'On Duty' ? 'bg-orange-100 text-orange-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                                            {staff.status}
+                                        </span>
+                                    </div>
+                                    <div className="w-1/3 flex justify-end space-x-2 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => openModal('VIEW', staff)} className="p-2  hover:bg-blue-200 rounded-lg text-black-400 hover:text-blue-700 transition-colors"><Eye size={16} /></button>
+                                        <button onClick={() => openModal('EDIT', staff)} className="p-2 hover:bg-amber-50 rounded-lg text-black-400 hover:text-amber-700 transition-colors"><Edit2 size={16} /></button>
+                                        <button onClick={() => openModal('DELETE', staff)} className="p-2 hover:bg-red-50 rounded-lg text-black-400 hover:text-red-600 transition-colors"><Trash2 size={16} /></button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
                     </div>
-
-                    {/* Table */}
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
-                            <h3 className="text-sm font-semibold text-gray-500">NAME</h3>
-                            <div className="w-1/2 flex justify-between text-sm font-semibold text-gray-500">
-                                <span className="w-1/3">ROLE</span>
-                                <span className="w-1/3">STATUS</span>
-                                <span className="w-1/3 text-right">ACTIONS</span>
-                            </div>
-                        </div>
-
-                        <div className="divide-y divide-gray-200">
-                            {filteredStaff.map(staff => (
-                                <div key={staff.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors group">
-                                    <div className="flex items-center space-x-4 w-1/2">
-                                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
-                                            {staff.name.charAt(0)}
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-900 font-medium">{staff.name}</p>
-                                            <p className="text-xs text-gray-500">{staff.title} • {staff.area}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-1/2 flex items-center justify-between">
-                                        <div className="w-1/3 text-sm text-gray-600">{staff.role}</div>
-                                        <div className="w-1/3">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${staff.status === 'On Duty' ? 'bg-orange-100 text-orange-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                                                {staff.status}
-                                            </span>
-                                        </div>
-                                        <div className="w-1/3 flex justify-end space-x-2 group-hover:opacity-100 transition-opacity">
-                                            <button onClick={() => openModal('VIEW', staff)} className="p-2  hover:bg-blue-200 rounded-lg text-black-400 hover:text-blue-700 transition-colors"><Eye size={16} /></button>
-                                            <button onClick={() => openModal('EDIT', staff)} className="p-2 hover:bg-amber-50 rounded-lg text-black-400 hover:text-amber-700 transition-colors"><Edit2 size={16} /></button>
-                                            <button onClick={() => openModal('DELETE', staff)} className="p-2 hover:bg-red-50 rounded-lg text-black-400 hover:text-red-600 transition-colors"><Trash2 size={16} /></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 </div>
-            </main>
+            </div>
 
             {/* --- MODAL SYSTEM --- */}
             {isModalOpen && (
@@ -327,6 +307,6 @@ export function HRMDashboard() {
                 </div>
             )}
 
-        </div>
+        </>
     );
 }
