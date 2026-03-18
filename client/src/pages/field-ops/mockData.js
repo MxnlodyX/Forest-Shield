@@ -38,8 +38,8 @@ export const mapPoints = [
     riskLevel: 'Low',
     distanceKm: '2.4',
     eta: '45 MIN',
-    position: [18.7883, 98.9853], // พิกัดจริง (เช่น แถวเชียงใหม่)
-    coordinates: '18.7883° N, 98.9853° E',
+    position: [14.4386, 101.3724], // พิกัดโซนเขาใหญ่
+    coordinates: '14.4386° N, 101.3724° E',
     notes: 'จุดพักยามประจำทิศเหนือ มีชุดปฐมพยาบาลและวิทยุสื่อสารสำรอง'
   },
   {
@@ -50,8 +50,8 @@ export const mapPoints = [
     riskLevel: 'Medium',
     distanceKm: '4.1',
     eta: '1 HR 20 MIN',
-    position: [18.7941, 98.9951], // พิกัดจริง
-    coordinates: '18.7941° N, 98.9951° E',
+    position: [14.4453, 101.3810], // พิกัดโซนเขาใหญ่
+    coordinates: '14.4453° N, 101.3810° E',
     notes: 'แหล่งน้ำธรรมชาติ ตรวจพบร่องรอยสัตว์ป่าสงวนเมื่อ 2 วันก่อน'
   },
   {
@@ -62,8 +62,8 @@ export const mapPoints = [
     riskLevel: 'High',
     distanceKm: '6.8',
     eta: '2 HR 45 MIN',
-    position: [18.7750, 98.9722], // พิกัดจริง
-    coordinates: '18.7750° N, 98.9722° E',
+    position: [14.4291, 101.3619], // พิกัดโซนเขาใหญ่
+    coordinates: '14.4291° N, 101.3619° E',
     notes: 'พื้นที่ดินถล่มจากพายุสัปดาห์ก่อน ห้ามเข้าใกล้ขอบหน้าผาเด็ดขาด'
   }
 ];
