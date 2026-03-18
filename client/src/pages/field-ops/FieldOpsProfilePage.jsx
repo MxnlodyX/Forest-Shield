@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 // Assuming this is your context path based on the snippet
-import { useAppContext } from '../../context/AppContext';
+import { useAppContext } from '../../context/useAppContext';
 
 // Helper function to extract initials for the avatar
 const getInitials = (name) => {

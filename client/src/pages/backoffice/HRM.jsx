@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Search, Plus, X, Edit2, Trash2, Eye, CheckCircle, Camera
 } from 'lucide-react';
@@ -231,10 +231,9 @@ export function HRMDashboard() {
                                             <div>
                                                 <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
                                                 <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })} className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 appearance-none">
-                                                    <option>Ranger</option>
-                                                    <option>Guard</option>
-                                                    <option>Specialist</option>
-                                                    <option>Manager</option>
+                                                    <option>Field-Ops</option>
+                                                    <option>Back-Office</option>
+                                          
                                                 </select>
                                             </div>
                                         </div>
