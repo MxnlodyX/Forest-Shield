@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Search, Plus, X, Edit2, Trash2, Eye, CheckCircle, Camera
 } from 'lucide-react';
+import { api, resolveMediaUrl } from '../../services/api';
 
-// ข้อมูลจำลอง (Mock Data)
-const initialStaff = [
-    { id: 1, name: 'Jonathan Silva', title: 'Senior Ranger', role: 'Ranger', area: 'Northern Sector A', contact: '+1 555-0101', status: 'On Duty' },
-    { id: 2, name: 'Elena Vance', title: 'Wildlife Biologist', role: 'Specialist', area: 'Eastern Valley', contact: '+1 555-0102', status: 'On Duty' },
-    { id: 3, name: 'David Miller', title: 'Patrol Officer', role: 'Guard', area: 'Western Perimeter', contact: '+1 555-0103', status: 'Off Duty' },
-];
+function mapApiStaffToUi(staff) {
+    return {
+        id: staff.staff_id,
+        name: staff.full_name,
+        title: staff.title_role,
+        role: staff.staff_role,
+        area: '-',
+        contact: staff.contact_number || '-',
+        status: staff.status,
+        username: staff.username,
+        image: staff.profile_image || null,
+    };
+}
 
 export function HRMDashboard() {
-    const [staffList, setStaffList] = useState(initialStaff);
+    const [staffList, setStaffList] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     // Modal & Toast States
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState(''); // 'VIEW', 'ADD', 'EDIT', 'DELETE'
+    const [modalType, setModalType] = useState(''); 
     const [selectedStaff, setSelectedStaff] = useState(null);
     const [toastMessage, setToastMessage] = useState('');
 
@@ -24,6 +34,19 @@ export function HRMDashboard() {
     const [formData, setFormData] = useState({
         name: '', title: '', role: 'Ranger', area: '', contact: '', status: 'Off Duty', username: '', password: '', image: null
     });
+
+    useEffect(() => {
+        const loadStaff = async () => {
+            try {
+                const data = await api.get('/api/staff');
+                setStaffList(Array.isArray(data) ? data.map(mapApiStaffToUi) : []);
+            } catch (error) {
+                showToast(error.message || 'Unable to load staff list');
+            }
+        };
+
+        loadStaff();
+    }, []);
 
     // เปิด Modal พร้อมเซ็ตข้อมูล
     const openModal = (type, staff = null) => {
@@ -46,17 +69,44 @@ export function HRMDashboard() {
     };
 
     // จัดการ Submit (Add / Edit)
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (modalType === 'ADD') {
-            const newStaff = { ...formData, id: Date.now() };
-            setStaffList([newStaff, ...staffList]);
-            showToast('Staff member added successfully');
-        } else if (modalType === 'EDIT') {
-            setStaffList(staffList.map(s => s.id === selectedStaff.id ? { ...formData, id: s.id } : s));
-            showToast('Staff profile updated successfully');
+
+        if (isUploadingImage) {
+            showToast('Image is still uploading. Please wait.');
+            return;
         }
-        closeModal();
+
+        try {
+            setIsSubmitting(true);
+
+            if (modalType === 'ADD') {
+                const payload = {
+                    username: formData.username.trim(),
+                    password: formData.password,
+                    full_name: formData.name.trim(),
+                    contact_number: formData.contact.trim(),
+                    title_role: formData.title.trim(),
+                    staff_role: formData.role,
+                    status: formData.status,
+                    profile_image: formData.image || null,
+                };
+
+                const result = await api.post('/api/add_new_staff', payload);
+                const created = result?.staff ? mapApiStaffToUi(result.staff) : { ...formData, id: Date.now() };
+                setStaffList([created, ...staffList]);
+                showToast('Staff member added successfully');
+            } else if (modalType === 'EDIT') {
+                setStaffList(staffList.map(s => s.id === selectedStaff.id ? { ...formData, id: s.id } : s));
+                showToast('Staff profile updated locally');
+            }
+
+            closeModal();
+        } catch (error) {
+            showToast(error.message || 'Unable to save staff data');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     // จัดการลบข้อมูล
@@ -70,6 +120,26 @@ export function HRMDashboard() {
     const filteredStaff = staffList.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleImageChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setIsUploadingImage(true);
+            const form = new FormData();
+            form.append('image', file);
+
+            const result = await api.postForm('/api/upload_profile_image', form);
+            setFormData((prev) => ({ ...prev, image: result.image_url }));
+            showToast('Image uploaded successfully');
+        } catch (error) {
+            showToast(error.message || 'Unable to upload image');
+        } finally {
+            setIsUploadingImage(false);
+            e.target.value = '';
+        }
+    };
 
     return (
         <>
@@ -170,7 +240,7 @@ export function HRMDashboard() {
                                     <div className="flex flex-col items-center justify-center">
                                         <div className="relative w-24 h-24 rounded-full bg-gray-50 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden hover:bg-gray-100 hover:border-emerald-400 transition-all cursor-pointer group">
                                             {formData.image ? (
-                                                <img src={formData.image} alt="Profile" className="w-full h-full object-cover" />
+                                                <img src={resolveMediaUrl(formData.image)} alt="Profile" className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className="flex flex-col items-center text-gray-400 group-hover:text-emerald-500 transition-colors">
                                                     <Camera size={24} className="mb-1" />
@@ -182,16 +252,13 @@ export function HRMDashboard() {
                                                 type="file"
                                                 accept="image/*"
                                                 className="absolute inset-0 opacity-0 cursor-pointer"
-                                                onChange={(e) => {
-                                                    const file = e.target.files[0];
-                                                    if (file) {
-                                                        // สร้าง URL ชั่วคราวสำหรับ Preview รูป
-                                                        setFormData({ ...formData, image: URL.createObjectURL(file) });
-                                                    }
-                                                }}
+                                                onChange={handleImageChange}
+                                                disabled={isUploadingImage}
                                             />
                                         </div>
-                                        <p className="text-xs text-gray-400 mt-2">Please uplaod in format JPG or PNG</p>
+                                        <p className="text-xs text-gray-400 mt-2">
+                                            {isUploadingImage ? 'Uploading image...' : 'Please upload JPG, PNG, or WEBP'}
+                                        </p>
                                     </div>
 
                                     {/* --- Account Credentials --- */}
@@ -243,8 +310,8 @@ export function HRMDashboard() {
                                 {/* Footer Buttons */}
                                 <div className="p-6 border-t border-gray-200 flex justify-end space-x-3 bg-gray-50/50">
                                     <button type="button" onClick={closeModal} className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Cancel</button>
-                                    <button type="submit" className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-emerald-600/20">
-                                        {modalType === 'ADD' ? 'Create Staff Profile' : 'Save Changes'}
+                                    <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-emerald-600/20">
+                                        {isSubmitting ? 'Saving...' : modalType === 'ADD' ? 'Create Staff Profile' : 'Save Changes'}
                                     </button>
                                 </div>
                             </form>
