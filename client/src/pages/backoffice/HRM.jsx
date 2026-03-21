@@ -11,6 +11,13 @@ const getImageUrl = (path) => {
     return `${baseUrl}${path}`;
 };
 
+const normalizeRole = (role) => {
+    const value = (role || '').trim().toLowerCase();
+    if (value === 'backoffice' || value === 'back-office') return 'Back-Office';
+    if (value === 'fieldops' || value === 'field-ops') return 'Field-Ops';
+    return role;
+};
+
 export function HRMDashboard() {
     const [staffList, setStaffList] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +49,7 @@ export function HRMDashboard() {
                     name: staff.full_name,
                     contact: staff.contact_number,
                     title: staff.title_role,
-                    role: staff.staff_role,
+                    role: normalizeRole(staff.staff_role),
                     area: staff.area || '-',
                     status: staff.status,
                     image: staff.profile_image,
@@ -105,7 +112,7 @@ export function HRMDashboard() {
             const payload = {
                 name: formData.name.trim(),
                 title: formData.title.trim(),
-                role: formData.role,
+                role: normalizeRole(formData.role),
                 area: formData.area || '-',
                 contact: formData.contact.trim() || '-',
                 status: formData.status,
@@ -161,7 +168,7 @@ export function HRMDashboard() {
         total: staffList.length,
         onDuty: staffList.filter((staff) => staff.status === 'On Duty').length,
         offDuty: staffList.filter((staff) => staff.status === 'Off Duty').length,
-        backoffice: staffList.filter((staff) => staff.role === 'Backoffice').length,
+        backoffice: staffList.filter((staff) => normalizeRole(staff.role) === 'Back-Office').length,
     };
 
     const selectedStaffDetail = staffList.find((staff) => staff.id === selectedStaffId) || null;
@@ -469,7 +476,7 @@ export function HRMDashboard() {
                                                 <label className="block text-xs font-medium text-gray-600 mb-1">ระดับสิทธิ์ (Role) *</label>
                                                 <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })} className="w-full border-gray-300 border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500/30">
                                                     <option value="Field-Ops">Field-Ops (ภาคสนาม)</option>
-                                                    <option value="Backoffice">Backoffice (ส่วนกลาง)</option>
+                                                    <option value="Back-Office">Back-Office (ส่วนกลาง)</option>
                                                 </select>
                                             </div>
                                             <div>
